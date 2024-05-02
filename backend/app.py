@@ -7,12 +7,26 @@ from flask_cors import CORS
 # Crear una instancia de la aplicación Flask
 app = Flask(__name__)
 CORS(app) 
-app.config["MONGO_URI"] = "mongodb+srv://gregorysalazar:ga5YPlGoEAJDYiw7@cluster0.j67jvkq.mongodb.net/test"
+app.config["MONGO_URI"] = "mongodb://localhost:27017/test"
 mongo = PyMongo(app)
 
 # Ruta para obtener un producto por su ID
 
-
+# Ruta para obtener todos los productos
+@app.route('/productos', methods=['GET'])
+def get_products():
+    try:
+        productos = mongo.db.productos.find()
+        output = []
+        for producto in productos:
+            output.append({
+                '_id': str(producto['_id']),
+                'nombre': producto['nombre'],
+                'precio': producto['precio']
+            })
+        return jsonify({'productos': output}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 @app.route('/products/<string:product_id>', methods=['GET'])
 def get_product(product_id):
@@ -23,7 +37,7 @@ def get_product(product_id):
             return jsonify({'message': 'Invalid product ID'}), 400
         
         # Consultar el producto en la base de datos
-        product = mongo.db.productos.find_one({'_id': ObjectId("66319ebfbf76035ead2f1f73")})
+        product = mongo.db.productos.find_one({'_id': ObjectId(product_id)})
         
         
         if product:
@@ -57,20 +71,7 @@ def create_product():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-# Ruta para obtener todos los productos
-@app.route('/productos', methods=['GET'])
-def get_products():
-    try:
-        productos = mongo.db.productos.find()
-        output = []
-        for producto in productos:
-            output.append({
-                'nombre': producto['nombre'],
-                'precio': producto['precio']
-            })
-        return jsonify({'productos': output}), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
+
 
 
 
