@@ -2,12 +2,25 @@ from flask import Flask, jsonify , request, abort
 from flask_pymongo import PyMongo
 from bson import ObjectId
 from flask_cors import CORS
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
+
+mongo_user = os.getenv('DB_USER')
+mongo_password = os.getenv('DB_PASSWORD')
+mongo_host = os.getenv('DB_HOST')
+mongo_port = int(os.getenv('DB_PORT', '27017'))  # Usar el puerto 27017 por defecto si DB_PORT no está definido
+mongo_db_name = os.getenv('DB_NAME')
 
 # Crear una instancia de la aplicación Flask
 app = Flask(__name__)
 CORS(app) 
-app.config["MONGO_URI"] = "mongodb://localhost:27017/test"
+# Construir la URL de conexión a MongoDB
+mongo_uri = f"mongodb://{mongo_user}:{mongo_password}@{mongo_host}:{mongo_port}/{mongo_db_name}"
+
+# Configurar la aplicación Flask
+app.config["MONGO_URI"] = mongo_uri
 mongo = PyMongo(app)
 
 # Ruta para obtener un producto por su ID

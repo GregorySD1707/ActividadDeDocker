@@ -1,0 +1,39 @@
+version: '3.3'
+services:
+  backend:
+    restart: always  
+    build:
+      dockerfile: Dockerfile
+      context: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_HOST=127.0.0.1
+      - DB_USER=viradmin
+      - DB_PASSWORD=hetvir123
+      - DB_NAME=scandere
+    links:
+      - mongodb
+    depends_on:
+      - mongodb
+  mongodb:
+    image: mongo:6.0.1
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    environment:
+      - MONGO_INITDB_DATABASE=scandere
+      - MONGO_INITDB_ROOT_USERNAME=viradmin
+      - MONGO_INITDB_ROOT_PASSWORD=hetvir123
+    volumes:
+      - db:/data/db
+  frontend:
+    build:
+      dockerfile: Dockerfile
+      context: ./frontend
+    ports:
+      - "8080:8080"
+    links:
+      - backend
+volumes:
+  db:
