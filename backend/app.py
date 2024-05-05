@@ -17,7 +17,7 @@ mongo_db_name = os.getenv('DB_NAME')
 app = Flask(__name__)
 CORS(app) 
 # Construir la URL de conexión a MongoDB
-mongo_uri = f"mongodb://{mongo_user}:{mongo_password}@{mongo_host}:{mongo_port}/{mongo_db_name}"
+mongo_uri = f"mongodb://{mongo_user}:{mongo_password}@{mongo_host}:{mongo_port}/{mongo_db_name}?authSource=admin"
 
 # Configurar la aplicación Flask
 app.config["MONGO_URI"] = mongo_uri
